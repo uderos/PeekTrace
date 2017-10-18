@@ -9,8 +9,8 @@ static const std::string f_PROGRAM_NAME("PeekTrace");
 static const std::string f_PROGRAM_VERSION("0.1");
 
 static const std::string DEFAULT_INPUT_FILE{
-	(R"(C:\ws\ws_supertop_01\TOP\CM\SW\backup\CurrentTraceFile.txt)") 
-//	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
+//	(R"(C:\ws\ws_supertop_01\TOP\CM\SW\backup\CurrentTraceFile.txt)") 
+	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
 };
 
 Config * Config::m_instance_ptr = nullptr;
