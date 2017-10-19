@@ -15,9 +15,8 @@ class Config
 		bool GetVerboseFlag() const;
 		bool GetDebugFlag() const;
 		bool GetTailFlag() const;
-		void GetFilters(
-			std::vector<std::string> & and_filters,
-			std::vector<std::string> & or_filters);
+		const std::vector<std::string> & GetANDFilters() const;
+		const std::vector<std::string> & GetORFilters() const;
 
 	private:
 
@@ -37,4 +36,3 @@ class Config
 
 		std::string m_get_prog_name_and_version() const;
 };
-

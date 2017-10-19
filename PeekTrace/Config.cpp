@@ -6,7 +6,7 @@
 namespace po = boost::program_options;
 
 static const std::string f_PROGRAM_NAME("PeekTrace");
-static const std::string f_PROGRAM_VERSION("0.1");
+static const std::string f_PROGRAM_VERSION("0.2");
 
 static const std::string DEFAULT_INPUT_FILE{
 //	(R"(C:\ws\ws_supertop_01\TOP\CM\SW\backup\CurrentTraceFile.txt)") 
@@ -78,6 +78,7 @@ void Config::Dump() const
 	std::cout << "Configuration:"
 		<< "\n\t input-file=" << m_input_file_path
 		<< "\n\t verbose=" << m_verbose_flag
+		<< "\n\t debug=" << m_debug_flag
 		<< "\n\t all-file=" << m_all_file_flag;
 
 	for (const auto s : m_and_filters)
@@ -87,7 +88,6 @@ void Config::Dump() const
 		std::cout << "\n\t OR " << s;
 
 	std::cout << std::endl;
-
 }
 
 const fs::path & Config::GetInpoutFilePath() const
@@ -114,13 +114,16 @@ bool Config::GetTailFlag() const
 	return (!m_all_file_flag);
 }
 
-void Config::GetFilters(
-	std::vector<std::string> & and_filters,
-	std::vector<std::string> & or_filters)
+const std::vector<std::string> & Config::GetANDFilters() const
 {
 	if (!m_has_configuration) THROW_RUNTIME_ERROR;
-	and_filters = m_and_filters;
-	or_filters = m_or_filters;
+	return m_and_filters;
+}
+
+const std::vector<std::string> & Config::GetORFilters() const
+{
+	if (!m_has_configuration) THROW_RUNTIME_ERROR;
+	return m_or_filters;
 }
 
 std::string Config::m_get_prog_name_and_version() const

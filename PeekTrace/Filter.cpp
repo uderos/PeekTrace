@@ -41,13 +41,13 @@ Filter::regex_ptr Filter::m_create_regex(const std::string & user_filter_str) co
 
 void Filter::m_setup_filters()
 {
-	std::vector<std::string> and_filter_str_list, or_filter_str_list;
-	g_CONFIG.GetFilters(and_filter_str_list, or_filter_str_list);
+	const std::vector<std::string> & and_filter_str_list = g_CONFIG.GetANDFilters();
+	const std::vector<std::string> & or_filter_str_list = g_CONFIG.GetORFilters();
 
-	for (const std::string str_filter : and_filter_str_list)
+	for (const std::string & str_filter : and_filter_str_list)
 		m_and_filters.emplace_back(m_create_regex(str_filter));
 
-	for (const std::string str_filter : or_filter_str_list)
+	for (const std::string & str_filter : or_filter_str_list)
 		m_or_filters.emplace_back(m_create_regex(str_filter));
 }
 
