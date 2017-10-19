@@ -25,7 +25,7 @@ class Config
 		bool m_has_configuration;
 		bool m_verbose_flag;
 		bool m_debug_flag;
-		bool m_all_file_flag;
+		bool m_single_shot_flag;
 		std::vector<std::string> m_and_filters;
 		std::vector<std::string> m_or_filters;
 

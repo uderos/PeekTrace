@@ -44,6 +44,7 @@ void Executor::m_read_and_log(
 	Filter & filter)
 {
 	constexpr auto SLEEP_TIME = std::chrono::milliseconds(500);
+	const bool single_shot = (!g_CONFIG.GetTailFlag());
 
 	std::string line;
 	do
@@ -52,6 +53,10 @@ void Executor::m_read_and_log(
 		{
 			if (filter.test_string(line))
 				outfile.write_string(line);
+		}
+		else if (single_shot)
+		{
+			return;
 		}
 		else
 		{

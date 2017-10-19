@@ -9,8 +9,8 @@ static const std::string f_PROGRAM_NAME("PeekTrace");
 static const std::string f_PROGRAM_VERSION("0.2");
 
 static const std::string DEFAULT_INPUT_FILE{
-//	(R"(C:\ws\ws_supertop_01\TOP\CM\SW\backup\CurrentTraceFile.txt)") 
-	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
+	(R"(C:\ws\ws_supertop_01\TOP\CM\SW\backup\CurrentTraceFile.txt)") 
+//	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
 };
 
 Config * Config::m_instance_ptr = nullptr;
@@ -19,7 +19,7 @@ Config::Config() :
 	m_has_configuration(false),
 	m_verbose_flag(false),
 	m_debug_flag(false),
-	m_all_file_flag(false)
+	m_single_shot_flag(false)
 {
 }
 
@@ -45,7 +45,7 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		("verbose,v", "Verbose logging on stdout")
 		("debug,d", "Enable debugging features")
 		("file,f", po::value<std::string>()->default_value(DEFAULT_INPUT_FILE), "Input file")
-		("all-file,A", "Process the entire (pre-existing) file")
+		("single-shot,s", "Process the entire file once")
 		("and,a", po::value<std::vector<std::string>>(&m_and_filters), "AND filter")
 		("or,o", po::value<std::vector<std::string>>(&m_or_filters), "OR filter")
 		;
@@ -64,7 +64,7 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		m_verbose_flag = (vm.count("verbose") > 0);
 		m_debug_flag = (vm.count("debug") > 0);
 		m_input_file_path = fs::path(vm["file"].as<std::string>());
-		m_all_file_flag = (vm.count("all-file") > 0);
+		m_single_shot_flag = (vm.count("single-shot") > 0);
 
 		if (m_verbose_flag)
 			Dump();
@@ -79,7 +79,7 @@ void Config::Dump() const
 		<< "\n\t input-file=" << m_input_file_path
 		<< "\n\t verbose=" << m_verbose_flag
 		<< "\n\t debug=" << m_debug_flag
-		<< "\n\t all-file=" << m_all_file_flag;
+		<< "\n\t single-shot=" << m_single_shot_flag;
 
 	for (const auto s : m_and_filters)
 		std::cout << "\n\t AND " << s;
@@ -111,7 +111,7 @@ bool Config::GetDebugFlag() const
 bool Config::GetTailFlag() const
 {
 	if (!m_has_configuration) THROW_RUNTIME_ERROR;
-	return (!m_all_file_flag);
+	return (!m_single_shot_flag);
 }
 
 const std::vector<std::string> & Config::GetANDFilters() const
