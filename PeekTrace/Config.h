@@ -15,6 +15,7 @@ class Config
 		bool GetVerboseFlag() const;
 		bool GetDebugFlag() const;
 		bool GetTailFlag() const;
+		bool IsExecutionRequired() const;
 		const std::vector<std::string> & GetANDFilters() const;
 		const std::vector<std::string> & GetORFilters() const;
 
@@ -26,6 +27,7 @@ class Config
 		bool m_verbose_flag;
 		bool m_debug_flag;
 		bool m_single_shot_flag;
+		bool m_execution_required;
 		std::vector<std::string> m_and_filters;
 		std::vector<std::string> m_or_filters;
 

@@ -9,8 +9,8 @@ static const std::string f_PROGRAM_NAME("PeekTrace");
 static const std::string f_PROGRAM_VERSION("0.2");
 
 static const std::string DEFAULT_INPUT_FILE{
-	(R"(C:\ws\ws_supertop_01\TOP\CM\SW\backup\CurrentTraceFile.txt)") 
-//	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
+//	(R"(C:\ws\ws_supertop_01\TOP\CM\SW\backup\CurrentTraceFile.txt)") 
+	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
 };
 
 Config * Config::m_instance_ptr = nullptr;
@@ -19,7 +19,8 @@ Config::Config() :
 	m_has_configuration(false),
 	m_verbose_flag(false),
 	m_debug_flag(false),
-	m_single_shot_flag(false)
+	m_single_shot_flag(false),
+	m_execution_required(true)
 {
 }
 
@@ -56,6 +57,7 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 	if (vm.count("help"))
 	{
 		std::cout << desc << std::endl;
+		m_execution_required = false;
 	}
 	else
 	{
@@ -114,6 +116,12 @@ bool Config::GetTailFlag() const
 	return (!m_single_shot_flag);
 }
 
+bool Config::IsExecutionRequired() const
+{
+	if (!m_has_configuration) THROW_RUNTIME_ERROR;
+	return m_execution_required;
+}
+
 const std::vector<std::string> & Config::GetANDFilters() const
 {
 	if (!m_has_configuration) THROW_RUNTIME_ERROR;
@@ -132,3 +140,5 @@ std::string Config::m_get_prog_name_and_version() const
 	oss << f_PROGRAM_NAME << " v" << f_PROGRAM_VERSION;
 	return oss.str();
 }
+
+

@@ -13,6 +13,7 @@ public:
 	bool Run();
 
 private:
+	bool m_execute();
 	void m_read_and_log(
 		InputFile & infile, 
 		OutputFile & outfile,

@@ -9,7 +9,6 @@
 Executor::Executor(const int argc, const char *argv[])
 {
 	g_CONFIG.ProcessCmdLine(argc, argv);
-
 }
 
 
@@ -18,6 +17,18 @@ Executor::~Executor()
 }
 
 bool Executor::Run()
+{
+	bool rc = true;
+
+	if (g_CONFIG.IsExecutionRequired())
+	{
+		rc = m_execute();
+	}
+		
+	return rc;
+}
+
+bool Executor::m_execute()
 {
 	const fs::path infile_path = g_CONFIG.GetInpoutFilePath();
 	InputFile infile(infile_path);
@@ -34,7 +45,7 @@ bool Executor::Run()
 	Filter filter;
 
 	m_read_and_log(infile, outfile, filter);
-		
+
 	return true;
 }
 
