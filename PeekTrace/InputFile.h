@@ -9,6 +9,8 @@ public:
 
 	void MoveToEndOfFile();
 
+	bool openFile();
+	bool closeFile();
 	bool is_open() const;
 	bool eof() const;
 	bool getline(std::string & line);
@@ -21,5 +23,6 @@ private:
 	std::string m_wide_string_to_byte_string(const std::wstring & wstr);
 	bool m_has_bom();
 	bool m_open_file();
+	void m_close_file();
 };
 

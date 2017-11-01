@@ -28,6 +28,8 @@
 #include "boost/filesystem.hpp"
 #include "boost/program_options.hpp"
 
+#include <windows.h>
+
 namespace fs = boost::filesystem;
 
 

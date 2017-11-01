@@ -10,7 +10,6 @@ InputFile::InputFile(const fs::path file_path) :
 	m_debug_logging_enabled(false)
 {
 	m_debug_logging_enabled = g_CONFIG.GetDebugFlag() && g_CONFIG.GetVerboseFlag();
-	m_open_file();
 }
 
 
@@ -39,6 +38,22 @@ bool InputFile::eof() const
 	if (m_ifstream.is_open()) THROW_RUNTIME_ERROR;
 	return m_ifstream.eof();
 }
+
+bool InputFile::openFile()
+{
+	if (!m_ifstream.is_open())
+		m_open_file();
+
+	return is_open();
+}
+
+bool InputFile::closeFile()
+{
+	const bool was_open = is_open();
+	m_close_file();
+	return was_open;
+}
+
 
 bool InputFile::getline(std::string & line)
 {
@@ -117,6 +132,9 @@ bool InputFile::m_has_bom()
 
 bool InputFile::m_open_file()
 {
+	if (m_debug_logging_enabled)
+		std::cout << "Opening input file" << std::endl;
+
 	if (m_ifstream.is_open()) THROW_RUNTIME_ERROR;
 
 	if (!fs::exists(m_file_path))
@@ -156,6 +174,18 @@ bool InputFile::m_open_file()
 
 	return this->is_open();
 }
+
+void InputFile::m_close_file()
+{
+	if (m_debug_logging_enabled)
+		std::cout << "Closing input file" << std::endl;
+
+	if (m_ifstream.is_open())
+		m_ifstream.close();
+}
+
+
+
 
 //void InputFile::m_remove_eol(std::string & str) const
 //{

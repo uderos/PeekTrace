@@ -13,9 +13,22 @@ enum eReturnCode
 	RC_ERROR = 1
 };
 
+static bool f_abort_flag = false;
+
+static BOOL WINAPI f_ConsoleHandler(DWORD signal) {
+
+	if (signal == CTRL_C_EVENT)
+	{
+		std::cout << "Ctrl-C handled" << std::endl;
+		f_abort_flag = true;
+	}
+
+	return TRUE;
+}
+
 static void f_run(const int argc, const char *argv[])
 {
-	Executor executor(argc, argv);
+	Executor executor(argc, argv, &f_abort_flag);
 	executor.Run();
 }
 
@@ -24,6 +37,13 @@ static void f_run(const int argc, const char *argv[])
 int main(const int argc, const char *argv[])
 {
 	int rc = RC_OKAY;
+
+	if (!SetConsoleCtrlHandler(f_ConsoleHandler, TRUE)) 
+	{
+		std::cout << "ERROR: Could not set control handler" << std::endl;
+		return RC_ERROR;
+	}
+
 
 	try
 	{
