@@ -35,7 +35,7 @@ bool Executor::Run()
 
 bool Executor::m_execute()
 {
-	const fs::path infile_path = g_CONFIG.GetInpoutFilePath();
+	const fs::path infile_path = m_GetInputFilePath();
 	
 	InputFile infile(infile_path);
 	infile.openFile();
@@ -91,3 +91,17 @@ void Executor::m_read_and_log(
 
 	} while (!(*m_abort_flag_ptr));
 }
+
+fs::path Executor::m_GetInputFilePath() const
+{
+	fs::path infile_path = g_CONFIG.GetInputFilePath();
+	if (!fs::exists(infile_path))
+	{
+		fs::path alternate_infile_path = g_CONFIG.GetAlternateInputFilePath();
+		if (fs::exists(alternate_infile_path))
+			infile_path = alternate_infile_path;
+	}
+
+	return infile_path;
+}
+

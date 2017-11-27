@@ -8,12 +8,10 @@ namespace po = boost::program_options;
 static const std::string f_PROGRAM_NAME("PeekTrace");
 static const std::string f_PROGRAM_VERSION("0.2");
 
+static const char f_ALTERNATE_INPUT_FILE_PATH_ENV[] = "PEEKTRACE_FILEPATH";
+
 static const std::string DEFAULT_INPUT_FILE{
-#ifdef _DEBUG
-	(R"(C:\ws\ws_supertop_01\TOP\CM\SW\backup\CurrentTraceFile.txt)") 
-#else
 	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
-#endif // #_DEBUG
 };
 
 Config * Config::m_instance_ptr = nullptr;
@@ -73,6 +71,7 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		m_input_file_path = fs::path(vm["file"].as<std::string>());
 		m_single_shot_flag = (vm.count("single-shot") > 0);
 		m_close_file_flag = (vm.count("close-file") > 0);
+		m_read_alternate_input_file_path();
 
 		if (m_verbose_flag)
 			Dump();
@@ -98,10 +97,16 @@ void Config::Dump() const
 	std::cout << std::endl;
 }
 
-const fs::path & Config::GetInpoutFilePath() const
+const fs::path & Config::GetInputFilePath() const
 {
 	if (!m_has_configuration) THROW_RUNTIME_ERROR;
 	return m_input_file_path;
+}
+
+const fs::path & Config::GetAlternateInputFilePath() const
+{
+	if (!m_has_configuration) THROW_RUNTIME_ERROR;
+	return m_alternate_input_file_path;
 }
 
 bool Config::GetVerboseFlag() const
@@ -152,5 +157,23 @@ std::string Config::m_get_prog_name_and_version() const
 	oss << f_PROGRAM_NAME << " v" << f_PROGRAM_VERSION;
 	return oss.str();
 }
+
+
+void Config::m_read_alternate_input_file_path()
+{
+	m_alternate_input_file_path.clear();
+
+	char * membuff_ptr = nullptr;
+	size_t requiredSize = 0;
+	getenv_s(&requiredSize, NULL, 0, f_ALTERNATE_INPUT_FILE_PATH_ENV);
+
+	if (requiredSize)
+	{
+		membuff_ptr = new char[requiredSize];
+		getenv_s(&requiredSize, membuff_ptr, requiredSize, f_ALTERNATE_INPUT_FILE_PATH_ENV);
+		m_alternate_input_file_path = fs::path(membuff_ptr);
+	}
+}
+
 
 

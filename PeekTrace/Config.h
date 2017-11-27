@@ -11,7 +11,8 @@ class Config
 		void ProcessCmdLine(const int argc, const char *argv[]);
 		void Dump() const;
 
-		const fs::path & GetInpoutFilePath() const;
+		const fs::path & GetInputFilePath() const;
+		const fs::path & GetAlternateInputFilePath() const;
 		bool GetVerboseFlag() const;
 		bool GetDebugFlag() const;
 		bool GetTailFlag() const;
@@ -34,9 +35,11 @@ class Config
 		std::vector<std::string> m_or_filters;
 
 		fs::path m_input_file_path;
+		fs::path m_alternate_input_file_path;
 
 		Config();
 		virtual ~Config();
 
 		std::string m_get_prog_name_and_version() const;
+		void m_read_alternate_input_file_path();
 };

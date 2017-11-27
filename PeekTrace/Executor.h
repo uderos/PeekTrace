@@ -23,5 +23,6 @@ private:
 		InputFile & infile, 
 		OutputFile & outfile,
 		Filter & filter);
+	fs::path m_GetInputFilePath() const;
 };
 
