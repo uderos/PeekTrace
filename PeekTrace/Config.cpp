@@ -163,15 +163,14 @@ void Config::m_read_alternate_input_file_path()
 {
 	m_alternate_input_file_path.clear();
 
-	char * membuff_ptr = nullptr;
 	size_t requiredSize = 0;
 	getenv_s(&requiredSize, NULL, 0, f_ALTERNATE_INPUT_FILE_PATH_ENV);
 
 	if (requiredSize)
 	{
-		membuff_ptr = new char[requiredSize];
-		getenv_s(&requiredSize, membuff_ptr, requiredSize, f_ALTERNATE_INPUT_FILE_PATH_ENV);
-		m_alternate_input_file_path = fs::path(membuff_ptr);
+		auto membuff_ptr = std::make_unique<char[]>(requiredSize);
+		getenv_s(&requiredSize, membuff_ptr.get(), requiredSize, f_ALTERNATE_INPUT_FILE_PATH_ENV);
+		m_alternate_input_file_path = fs::path(membuff_ptr.get());
 	}
 }
 
