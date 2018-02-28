@@ -6,7 +6,7 @@
 namespace po = boost::program_options;
 
 static const std::string f_PROGRAM_NAME("PeekTrace");
-static const std::string f_PROGRAM_VERSION("0.3");
+static const std::string f_PROGRAM_VERSION("0.4");
 
 static const char f_ALTERNATE_INPUT_FILE_PATH_ENV[] = "PEEKTRACE_FILEPATH";
 
@@ -52,6 +52,9 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		("close-file,c", "Close the file when idle")
 		("and,a", po::value<std::vector<std::string>>(&m_and_filters), "AND filter")
 		("or,o", po::value<std::vector<std::string>>(&m_or_filters), "OR filter")
+		("am", "Select only AM messages")
+		("cm", "Select only CM messages")
+		("cl", "Select only CL messages")
 		;
 
 	po::variables_map vm;
@@ -72,6 +75,10 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		m_single_shot_flag = (vm.count("single-shot") > 0);
 		m_close_file_flag = (vm.count("close-file") > 0);
 		m_read_alternate_input_file_path();
+
+		if (vm.count("am") > 0) m_and_filters.push_back(R"(\|A\|)");
+		if (vm.count("cm") > 0) m_and_filters.push_back(R"(\|C\|)");
+		if (vm.count("cl") > 0) m_and_filters.push_back(R"(\|L\|)");
 
 		if (m_verbose_flag)
 			Dump();
