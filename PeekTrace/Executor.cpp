@@ -46,7 +46,7 @@ bool Executor::m_execute()
 		return false;
 	}
 
-	if (g_CONFIG.GetTailFlag())
+	if (g_CONFIG.GetSingleShotFlag())
 		infile.MoveToEndOfFile();
 
 	OutputFile outfile(std::cout);
@@ -63,8 +63,7 @@ void Executor::m_read_and_log(
 	Filter & filter)
 {
 	constexpr auto SLEEP_TIME = std::chrono::milliseconds(1000);
-	const bool single_shot = (!g_CONFIG.GetTailFlag());
-	const bool close_file_on_idle = g_CONFIG.GetCloseFileOnIdleFlag();
+	const bool single_shot = g_CONFIG.GetSingleShotFlag();
 
 	std::string line;
 	do
@@ -80,13 +79,7 @@ void Executor::m_read_and_log(
 		}
 		else
 		{
-			if (close_file_on_idle)
-				infile.closeFile();
-
 			std::this_thread::sleep_for(SLEEP_TIME);
-
-			if (close_file_on_idle)
-				infile.openFile();
 		}
 
 	} while (!(*m_abort_flag_ptr));

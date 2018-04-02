@@ -6,7 +6,7 @@
 namespace po = boost::program_options;
 
 static const std::string f_PROGRAM_NAME("PeekTrace");
-static const std::string f_PROGRAM_VERSION("0.4");
+static const std::string f_PROGRAM_VERSION("0.5");
 
 static const char f_ALTERNATE_INPUT_FILE_PATH_ENV[] = "PEEKTRACE_FILEPATH";
 
@@ -21,7 +21,6 @@ Config::Config() :
 	m_verbose_flag(false),
 	m_debug_flag(false),
 	m_single_shot_flag(false),
-	m_close_file_flag(false),
 	m_execution_required(true)
 {
 }
@@ -49,7 +48,6 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		("debug,d", "Enable debugging features")
 		("file,f", po::value<std::string>()->default_value(DEFAULT_INPUT_FILE), "Input file")
 		("single-shot,s", "Process the entire file once")
-		("close-file,c", "Close the file when idle")
 		("and,a", po::value<std::vector<std::string>>(&m_and_filters), "AND filter")
 		("or,o", po::value<std::vector<std::string>>(&m_or_filters), "OR filter")
 		("am", "Select only AM messages")
@@ -73,7 +71,6 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		m_debug_flag = (vm.count("debug") > 0);
 		m_input_file_path = fs::path(vm["file"].as<std::string>());
 		m_single_shot_flag = (vm.count("single-shot") > 0);
-		m_close_file_flag = (vm.count("close-file") > 0);
 		m_read_alternate_input_file_path();
 
 		if (vm.count("am") > 0) m_and_filters.push_back(R"(\|A\|)");
@@ -128,16 +125,10 @@ bool Config::GetDebugFlag() const
 	return m_debug_flag;
 }
 
-bool Config::GetTailFlag() const
+bool Config::GetSingleShotFlag() const
 {
 	if (!m_has_configuration) THROW_RUNTIME_ERROR;
-	return (!m_single_shot_flag);
-}
-
-bool Config::GetCloseFileOnIdleFlag() const
-{
-	if (!m_has_configuration) THROW_RUNTIME_ERROR;
-	return m_close_file_flag;
+	return m_single_shot_flag;
 }
 
 bool Config::IsExecutionRequired() const
