@@ -19,6 +19,7 @@ class Config
 		bool IsExecutionRequired() const;
 		const std::vector<std::string> & GetANDFilters() const;
 		const std::vector<std::string> & GetORFilters() const;
+		const std::vector<std::string> & GetNOTFilters() const;
 
 	private:
 
@@ -31,6 +32,7 @@ class Config
 		bool m_execution_required;
 		std::vector<std::string> m_and_filters;
 		std::vector<std::string> m_or_filters;
+		std::vector<std::string> m_not_filters;
 
 		fs::path m_input_file_path;
 		fs::path m_alternate_input_file_path;

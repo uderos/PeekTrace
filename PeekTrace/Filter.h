@@ -13,6 +13,7 @@ private:
 
 	regex_list m_and_filters;
 	regex_list m_or_filters;
+	regex_list m_not_filters;
 
 
 	void m_setup_filters();

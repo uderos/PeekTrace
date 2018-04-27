@@ -46,7 +46,7 @@ bool Executor::m_execute()
 		return false;
 	}
 
-	if (g_CONFIG.GetSingleShotFlag())
+	if (!g_CONFIG.GetSingleShotFlag())
 		infile.MoveToEndOfFile();
 
 	OutputFile outfile(std::cout);

@@ -6,7 +6,7 @@
 namespace po = boost::program_options;
 
 static const std::string f_PROGRAM_NAME("PeekTrace");
-static const std::string f_PROGRAM_VERSION("0.5");
+static const std::string f_PROGRAM_VERSION("1.0");
 
 static const char f_ALTERNATE_INPUT_FILE_PATH_ENV[] = "PEEKTRACE_FILEPATH";
 
@@ -50,6 +50,7 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		("single-shot,s", "Process the entire file once")
 		("and,a", po::value<std::vector<std::string>>(&m_and_filters), "AND filter")
 		("or,o", po::value<std::vector<std::string>>(&m_or_filters), "OR filter")
+		("not,x", po::value<std::vector<std::string>>(&m_not_filters), "NOT filter")
 		("am", "Select only AM messages")
 		("cm", "Select only CM messages")
 		("cl", "Select only CL messages")
@@ -97,6 +98,9 @@ void Config::Dump() const
 
 	for (const auto s : m_or_filters)
 		std::cout << "\n\t OR " << s;
+
+	for (const auto s : m_not_filters)
+		std::cout << "\n\t NOT " << s;
 
 	std::cout << std::endl;
 }
@@ -147,6 +151,12 @@ const std::vector<std::string> & Config::GetORFilters() const
 {
 	if (!m_has_configuration) THROW_RUNTIME_ERROR;
 	return m_or_filters;
+}
+
+const std::vector<std::string> & Config::GetNOTFilters() const
+{
+	if (!m_has_configuration) THROW_RUNTIME_ERROR;
+	return m_not_filters;
 }
 
 std::string Config::m_get_prog_name_and_version() const
