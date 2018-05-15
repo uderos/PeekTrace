@@ -66,7 +66,7 @@ void Executor::m_read_and_log(
 	const bool single_shot = g_CONFIG.GetSingleShotFlag();
 
 	std::string line;
-	do
+	while (!m_abort_flag)
 	{
 		if (infile.getline(line))
 		{
@@ -81,8 +81,7 @@ void Executor::m_read_and_log(
 		{
 			m_sleep(SLEEP_TIME);
 		}
-
-	} while (!m_abort_flag);
+	}
 }
 
 fs::path Executor::m_GetInputFilePath() const
