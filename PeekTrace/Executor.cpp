@@ -6,15 +6,10 @@
 #include "OutputFile.h"
 
 
-Executor::Executor(const int argc, const char *argv[], const bool * abort_flag_ptr) :
-	m_abort_flag_ptr(abort_flag_ptr)
+Executor::Executor(const int argc, const char *argv[]) :
+	m_abort_flag(false)
 {
 	g_CONFIG.ProcessCmdLine(argc, argv);
-}
-
-Executor::Executor(const int argc, const char *argv[]) :
-	Executor(argc, argv, nullptr)
-{
 }
 
 Executor::~Executor()
@@ -31,6 +26,11 @@ bool Executor::Run()
 	}
 		
 	return rc;
+}
+
+void Executor::Abort()
+{
+	m_abort_flag = true;
 }
 
 bool Executor::m_execute()
@@ -79,10 +79,10 @@ void Executor::m_read_and_log(
 		}
 		else
 		{
-			std::this_thread::sleep_for(SLEEP_TIME);
+			m_sleep(SLEEP_TIME);
 		}
 
-	} while (!(*m_abort_flag_ptr));
+	} while (!m_abort_flag);
 }
 
 fs::path Executor::m_GetInputFilePath() const
@@ -96,5 +96,29 @@ fs::path Executor::m_GetInputFilePath() const
 	}
 
 	return infile_path;
+}
+
+void Executor::m_sleep(const std::chrono::milliseconds & sleep_time_ms) const
+{
+	const auto TIME_SLICE_MS = std::chrono::milliseconds(100);
+	const auto end_time_abs = std::chrono::steady_clock::now() + sleep_time_ms;
+
+	bool keep_looping = true;
+	while (keep_looping && (! m_abort_flag))
+	{
+		const auto current_time_abs = std::chrono::steady_clock::now();
+
+		if (current_time_abs >= end_time_abs)
+		{
+			keep_looping = false;
+		}
+		else
+		{
+			const auto remaining_sleep_time = end_time_abs - current_time_abs;
+			const auto next_sleep_time = (remaining_sleep_time < TIME_SLICE_MS ?
+				remaining_sleep_time : TIME_SLICE_MS);
+			std::this_thread::sleep_for(next_sleep_time);
+		}
+	}
 }
 

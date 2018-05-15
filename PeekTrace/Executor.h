@@ -8,15 +8,14 @@ class Executor
 {
 public:
 	Executor(const int argc, const char *argv[]);
-	Executor(const int argc,
-			 const char *argv[],
-			 const bool * abort_flag_ptr);
 	virtual ~Executor();
 
 	bool Run();
 
+	void Abort();
+
 private:
-	const bool * const m_abort_flag_ptr;
+	volatile std::atomic_bool m_abort_flag;
 
 	bool m_execute();
 	void m_read_and_log(
@@ -24,5 +23,6 @@ private:
 		OutputFile & outfile,
 		Filter & filter);
 	fs::path m_GetInputFilePath() const;
+	void m_sleep(const std::chrono::milliseconds & sleep_time_ms) const;
 };
 

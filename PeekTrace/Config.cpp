@@ -6,7 +6,7 @@
 namespace po = boost::program_options;
 
 static const std::string f_PROGRAM_NAME("PeekTrace");
-static const std::string f_PROGRAM_VERSION("1.0");
+static const std::string f_PROGRAM_VERSION("1.01");
 
 static const char f_ALTERNATE_INPUT_FILE_PATH_ENV[] = "PEEKTRACE_FILEPATH";
 

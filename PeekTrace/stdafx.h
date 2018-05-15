@@ -10,6 +10,8 @@
 //#include <stdio.h>
 //#include <tchar.h>
 
+#include <algorithm>
+#include <atomic>
 #include <cctype>
 #include <codecvt>
 #include <chrono>

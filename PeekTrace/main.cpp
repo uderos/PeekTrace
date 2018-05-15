@@ -13,25 +13,21 @@ enum eReturnCode
 	RC_ERROR = 1
 };
 
-static bool f_abort_flag = false;
+static std::weak_ptr<Executor> f_executor_remote_ptr;
 
 static BOOL WINAPI f_ConsoleHandler(DWORD signal) {
 
 	if (signal == CTRL_C_EVENT)
 	{
-		std::cout << "Ctrl-C handled" << std::endl;
-		f_abort_flag = true;
+		if (auto executor_ptr = f_executor_remote_ptr.lock())
+		{
+			std::cout << "Ctrl-C handled" << std::endl;
+			executor_ptr->Abort();
+		}
 	}
 
 	return TRUE;
 }
-
-static void f_run(const int argc, const char *argv[])
-{
-	Executor executor(argc, argv, &f_abort_flag);
-	executor.Run();
-}
-
 
 
 int main(const int argc, const char *argv[])
@@ -47,7 +43,9 @@ int main(const int argc, const char *argv[])
 
 	try
 	{
-		f_run(argc, argv);
+		auto executor_ptr = std::make_shared<Executor>(argc, argv);
+		f_executor_remote_ptr = executor_ptr;
+		executor_ptr->Run();
 	}
 	catch (std::exception & exh)
 	{
@@ -62,46 +60,5 @@ int main(const int argc, const char *argv[])
 
 	return 0;
 }
-
-//#include <stdio.h>
-//#ifdef WIN32
-//#include <windows.h>
-//#else
-//#include <signal.h>
-//#endif
-//
-//#ifdef WIN32
-//BOOL WINAPI CtrlHandler(DWORD fdwCtrlType)
-//{
-//	if (fdwCtrlType == CTRL_C_EVENT)
-//	{
-//		printf("Got ^C ...\n");
-//		return TRUE;
-//	}
-//	return FALSE;
-//}
-//#else 
-//void CtlCHandler(int nSignal)
-//{
-//	printf("Got ^C(%d) ...\n", nSignal);
-//	exit(0);
-//}
-//#endif
-//
-//int main(int argc, char *argv[], char *envp[])
-//{
-//#ifdef WIN32
-//	SetConsoleCtrlHandler(CtrlHandler, TRUE);
-//#else
-//	struct sigaction  sigact;
-//	memset(&sigact, 0, sizeof(struct sigaction));
-//	sigact.sa_handler = CtlCHandler;
-//	sigaction(SIGINT, &sigact, NULL);
-//	sigaction(SIGTERM, &sigact, NULL);
-//#endif
-//	/* .... */
-//	return 0;
-//}
-
 
 
