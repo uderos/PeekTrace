@@ -46,7 +46,7 @@ bool Executor::m_execute()
 		return false;
 	}
 
-	if (!g_CONFIG.GetSingleShotFlag())
+	if (g_CONFIG.GetContinuousReadingFlag())
 		infile.MoveToEndOfFile();
 
 	OutputFile outfile(std::cout);
@@ -63,7 +63,7 @@ void Executor::m_read_and_log(
 	Filter & filter)
 {
 	constexpr auto SLEEP_TIME = std::chrono::milliseconds(1000);
-	const bool single_shot = g_CONFIG.GetSingleShotFlag();
+	const bool continuous_reading = g_CONFIG.GetContinuousReadingFlag();
 
 	std::string line;
 	while (!m_abort_flag)
@@ -73,7 +73,7 @@ void Executor::m_read_and_log(
 			if (filter.test_string(line))
 				outfile.write_string(line);
 		}
-		else if (single_shot)
+		else if (!continuous_reading)
 		{
 			return;
 		}

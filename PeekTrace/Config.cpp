@@ -20,7 +20,7 @@ Config::Config() :
 	m_has_configuration(false),
 	m_verbose_flag(false),
 	m_debug_flag(false),
-	m_single_shot_flag(false),
+	m_keep_reading_flag(false),
 	m_execution_required(true)
 {
 }
@@ -47,7 +47,7 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		("verbose,v", "Verbose logging on stdout")
 		("debug,d", "Enable debugging features")
 		("file,f", po::value<std::string>()->default_value(DEFAULT_INPUT_FILE), "Input file")
-		("single-shot,s", "Process the entire file once")
+		("continuous-reading,c", "Continuous Reading")
 		("and,a", po::value<std::vector<std::string>>(&m_and_filters), "AND filter")
 		("or,o", po::value<std::vector<std::string>>(&m_or_filters), "OR filter")
 		("not,x", po::value<std::vector<std::string>>(&m_not_filters), "NOT filter")
@@ -71,7 +71,7 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		m_verbose_flag = (vm.count("verbose") > 0);
 		m_debug_flag = (vm.count("debug") > 0);
 		m_input_file_path = fs::path(vm["file"].as<std::string>());
-		m_single_shot_flag = (vm.count("single-shot") > 0);
+		m_keep_reading_flag = (vm.count("continuous-reading") > 0);
 		m_read_alternate_input_file_path();
 
 		if (vm.count("am") > 0) m_and_filters.push_back(R"(\|A\|)");
@@ -91,7 +91,7 @@ void Config::Dump() const
 		<< "\n\t input-file=" << m_input_file_path
 		<< "\n\t verbose=" << m_verbose_flag
 		<< "\n\t debug=" << m_debug_flag
-		<< "\n\t single-shot=" << m_single_shot_flag;
+		<< "\n\t continuous-reading=" << m_keep_reading_flag;
 
 	for (const auto s : m_and_filters)
 		std::cout << "\n\t AND " << s;
@@ -129,10 +129,10 @@ bool Config::GetDebugFlag() const
 	return m_debug_flag;
 }
 
-bool Config::GetSingleShotFlag() const
+bool Config::GetContinuousReadingFlag() const
 {
 	if (!m_has_configuration) THROW_RUNTIME_ERROR;
-	return m_single_shot_flag;
+	return m_keep_reading_flag;
 }
 
 bool Config::IsExecutionRequired() const

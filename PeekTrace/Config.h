@@ -15,7 +15,7 @@ class Config
 		const fs::path & GetAlternateInputFilePath() const;
 		bool GetVerboseFlag() const;
 		bool GetDebugFlag() const;
-		bool GetSingleShotFlag() const;
+		bool GetContinuousReadingFlag() const;
 		bool IsExecutionRequired() const;
 		const std::vector<std::string> & GetANDFilters() const;
 		const std::vector<std::string> & GetORFilters() const;
@@ -28,7 +28,7 @@ class Config
 		bool m_has_configuration;
 		bool m_verbose_flag;
 		bool m_debug_flag;
-		bool m_single_shot_flag;
+		bool m_keep_reading_flag;
 		bool m_execution_required;
 		std::vector<std::string> m_and_filters;
 		std::vector<std::string> m_or_filters;
