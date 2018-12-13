@@ -8,7 +8,7 @@ namespace po = boost::program_options;
 static const std::string f_PROGRAM_NAME("PeekTrace");
 static const std::string f_PROGRAM_VERSION("1.01");
 
-static const char f_ALTERNATE_INPUT_FILE_PATH_ENV[] = "PEEKTRACE_FILEPATH";
+static constexpr char f_ALTERNATE_INPUT_FILE_PATH_ENV[] = "PEEKTRACE_FILEPATH";
 
 static const std::string DEFAULT_INPUT_FILE{
 	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
