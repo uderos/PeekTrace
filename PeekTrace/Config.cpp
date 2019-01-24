@@ -6,13 +6,15 @@
 namespace po = boost::program_options;
 
 static const std::string f_PROGRAM_NAME("PeekTrace");
-static const std::string f_PROGRAM_VERSION("1.01");
+static const std::string f_PROGRAM_VERSION("2.00");
 
 static constexpr char f_ALTERNATE_INPUT_FILE_PATH_ENV[] = "PEEKTRACE_FILEPATH";
 
 static const std::string DEFAULT_INPUT_FILE{
 	(R"(C:\Program Files (x86)\IL\ACL-TOP\backup\CurrentTraceFile.txt)")
 };
+
+static constexpr std::uint64_t f_DEFAULT_READ_TIME_MS{ 1000 };
 
 Config * Config::m_instance_ptr = nullptr;
 
@@ -21,7 +23,8 @@ Config::Config() :
 	m_verbose_flag(false),
 	m_debug_flag(false),
 	m_keep_reading_flag(false),
-	m_execution_required(true)
+	m_execution_required(true),
+	m_read_interval_ms(0)
 {
 }
 
@@ -40,14 +43,11 @@ Config & Config::Instance()
 void Config::ProcessCmdLine(const int argc, const char *argv[])
 {
 	const std::string desc_str = m_get_prog_name_and_version() + std::string(" - Allowed options");
-	po::options_description desc(desc_str);
 
-	desc.add_options()
+	po::options_description general_desc(desc_str); // Options for all users
+	general_desc.add_options()
 		("help,h", "Produce this help message")
-		("verbose,v", "Verbose logging on stdout")
-		("debug,d", "Enable debugging features")
 		("file,f", po::value<std::string>()->default_value(DEFAULT_INPUT_FILE), "Input file")
-		("continuous-reading,c", "Continuous Reading")
 		("and,a", po::value<std::vector<std::string>>(&m_and_filters), "AND filter")
 		("or,o", po::value<std::vector<std::string>>(&m_or_filters), "OR filter")
 		("not,x", po::value<std::vector<std::string>>(&m_not_filters), "NOT filter")
@@ -56,12 +56,25 @@ void Config::ProcessCmdLine(const int argc, const char *argv[])
 		("cl", "Select only CL messages")
 		;
 
-	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::options_description reserved_desc("Hidden Options"); // Hidden options
+	reserved_desc.add_options()
+		("HELP,H", "Display hidden options")
+		("debug,d", "Enable debugging features")
+		("continuous-reading,c", "Continuous Reading")
+		("dt-ms", po::value<decltype(m_read_interval_ms)>(&m_read_interval_ms)->default_value(f_DEFAULT_READ_TIME_MS), "Continuous Reading Interval")
+		;
 
-	if (vm.count("help"))
+	po::options_description all_desc("Allowed options");
+	all_desc.add(general_desc).add(reserved_desc);
+
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, all_desc), vm);
+
+	const bool help_requested = vm.count("help") || vm.count("HELP");
+	if (help_requested)
 	{
-		std::cout << desc << std::endl;
+		std::cout << general_desc << std::endl;
+		if (vm.count("HELP")) std::cout << reserved_desc << std::endl;
 		m_execution_required = false;
 	}
 	else
@@ -91,7 +104,8 @@ void Config::Dump() const
 		<< "\n\t input-file=" << m_input_file_path
 		<< "\n\t verbose=" << m_verbose_flag
 		<< "\n\t debug=" << m_debug_flag
-		<< "\n\t continuous-reading=" << m_keep_reading_flag;
+		<< "\n\t continuous-reading=" << m_keep_reading_flag
+		<< "\n\t dt=" << m_read_interval_ms;
 
 	for (const auto s : m_and_filters)
 		std::cout << "\n\t AND " << s;
@@ -141,6 +155,13 @@ bool Config::IsExecutionRequired() const
 	return m_execution_required;
 }
 
+std::chrono::milliseconds Config::GetContinuousReadingIntervalMs() const
+{
+	if (!m_has_configuration) THROW_RUNTIME_ERROR;
+	return std::chrono::milliseconds(m_read_interval_ms);
+}
+
+
 const std::vector<std::string> & Config::GetANDFilters() const
 {
 	if (!m_has_configuration) THROW_RUNTIME_ERROR;
@@ -181,6 +202,4 @@ void Config::m_read_alternate_input_file_path()
 		m_alternate_input_file_path = fs::path(membuff_ptr.get());
 	}
 }
-
-
 

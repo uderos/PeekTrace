@@ -62,7 +62,7 @@ void Executor::m_read_and_log(
 	OutputFile & outfile,
 	Filter & filter)
 {
-	constexpr auto SLEEP_TIME = std::chrono::milliseconds(1000);
+	const auto sleep_time_ms = g_CONFIG.GetContinuousReadingIntervalMs();
 	const bool continuous_reading = g_CONFIG.GetContinuousReadingFlag();
 
 	std::string line;
@@ -79,7 +79,7 @@ void Executor::m_read_and_log(
 		}
 		else
 		{
-			m_sleep(SLEEP_TIME);
+			m_sleep(sleep_time_ms);
 		}
 	}
 }

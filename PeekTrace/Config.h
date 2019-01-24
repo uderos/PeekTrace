@@ -17,6 +17,7 @@ class Config
 		bool GetDebugFlag() const;
 		bool GetContinuousReadingFlag() const;
 		bool IsExecutionRequired() const;
+		std::chrono::milliseconds GetContinuousReadingIntervalMs() const;
 		const std::vector<std::string> & GetANDFilters() const;
 		const std::vector<std::string> & GetORFilters() const;
 		const std::vector<std::string> & GetNOTFilters() const;
@@ -30,6 +31,7 @@ class Config
 		bool m_debug_flag;
 		bool m_keep_reading_flag;
 		bool m_execution_required;
+		std::uint64_t m_read_interval_ms;
 		std::vector<std::string> m_and_filters;
 		std::vector<std::string> m_or_filters;
 		std::vector<std::string> m_not_filters;
