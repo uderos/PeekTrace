@@ -54,7 +54,7 @@ int main(const int argc, const char *argv[])
 	}
 	catch (...)
 	{
-		std::cout << "\nEXCEPTION: " << std::endl;
+		std::cout << "\nFATAL EXCEPTION" << std::endl;
 		rc = RC_ERROR;
 	}
 
